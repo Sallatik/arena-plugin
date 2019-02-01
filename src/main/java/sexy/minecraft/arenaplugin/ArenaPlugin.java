@@ -31,7 +31,7 @@ public class ArenaPlugin {
     @Inject
     private Logger logger;
 
-    private Arena arena;
+    private Arena arena = null; // is null until someone uses /arena start
 
     @Listener
     public void onGameInit(GameInitializationEvent event) {
@@ -92,8 +92,9 @@ public class ArenaPlugin {
         if(arena != null)
             throw new CommandException(Text.of("Arena already exists"));
 
-        arena = new Arena();
+        arena = new Arena(this);
         arena.addPlayer(player);
+        arena.startCountDown();
         player.sendMessage(Text.of("success"));
 
         return CommandResult.success();
@@ -104,6 +105,9 @@ public class ArenaPlugin {
 
         Player player = requirePlayer(src);
         requireArenaAvailable();
+        if (arena.contains(player))
+            throw new CommandException(Text.of("You are already in this arena"));
+
         arena.addPlayer(player);
         player.sendMessage(Text.of("success"));
 
@@ -115,11 +119,13 @@ public class ArenaPlugin {
 
         Player player = requirePlayer(src);
         requireArenaAvailable();
-        if (arena.removePlayer(player)) {
-            player.sendMessage(Text.of("success"));
-            return CommandResult.success();
-        } else
-            throw new CommandException(Text.of("You are not in game"));
+        if (!arena.contains(player))
+            throw new CommandException(Text.of("you are not in this arena"));
+
+        arena.removePlayer(player);
+        player.sendMessage(Text.of("success"));
+        return CommandResult.success();
+
     }
 
     @NonnullByDefault
@@ -134,5 +140,9 @@ public class ArenaPlugin {
         arena.extend(duration);
         player.sendMessage(Text.of("success"));
         return CommandResult.success();
+    }
+
+    void removeArena() {
+        arena = null;
     }
 }
