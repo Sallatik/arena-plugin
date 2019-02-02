@@ -11,6 +11,7 @@ import org.spongepowered.api.command.args.GenericArguments;
 import org.spongepowered.api.command.spec.CommandSpec;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.Listener;
+import org.spongepowered.api.event.entity.DestructEntityEvent;
 import org.spongepowered.api.event.game.state.GameInitializationEvent;
 import org.spongepowered.api.plugin.Plugin;
 import org.spongepowered.api.text.Text;
@@ -144,5 +145,18 @@ public class ArenaPlugin {
 
     void removeArena() {
         arena = null;
+    }
+
+    @Listener
+    public void onDestructEntityDeath(DestructEntityEvent.Death event) {
+
+        if (arena != null && arena.isGameStarted() && event.getTargetEntity() instanceof Player) {
+
+            Player deadPlayer = (Player) event.getTargetEntity();
+            if (arena.contains(deadPlayer)) {
+                arena.playerDied(deadPlayer);
+                event.setCancelled(true);
+            }
+        }
     }
 }

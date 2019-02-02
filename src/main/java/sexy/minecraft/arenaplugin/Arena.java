@@ -2,15 +2,16 @@ package sexy.minecraft.arenaplugin;
 
 import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
+import org.spongepowered.api.item.inventory.Inventory;
+import org.spongepowered.api.item.inventory.ItemStack;
+import org.spongepowered.api.item.inventory.ItemStackSnapshot;
+import org.spongepowered.api.item.inventory.Slot;
 import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 public class Arena {
@@ -27,6 +28,9 @@ public class Arena {
     // points for players to be placed when the game starts. Currently hard coded
     // TODO load from file instead
     private Set<Location<World>> startingPoints = hardCodedStartingPoints();
+
+    private Map<Player, ItemStackSnapshot[]> savedInventories = new HashMap<>();
+
     private StartCountDown startCountDown = new StartCountDown();
 
     public Arena(ArenaPlugin plugin) {
@@ -86,14 +90,12 @@ public class Arena {
     private void startGame() {
 
         gameStarted = true;
-
-        // TODO save inventory for all players
+        saveInventories();
         // TODO restrict fast travel commands usage e.g. /spawn, /home, /warp
         // put players at starting points
         positionPlayers();
         sendToAllPlayers("now fight!");
         // TODO start game (item spawning, restoring losers inventory, determining the winner)
-        die();
     }
 
     private void positionPlayers() {
@@ -104,6 +106,66 @@ public class Arena {
         Collections.shuffle(locations);
         // teleport every player to location popped from the stack
         players.forEach(p -> p.setLocation(locations.pop()));
+    }
+
+    private static final int NUM_OF_SLOTS = 41;
+
+    private void saveInventories() {
+
+        players.forEach(player -> {
+
+            Slot[] slots = getInventorySlots(player);
+
+            // stores a snapshot for every slot, from which all items can be restored
+            ItemStackSnapshot[] savedSlots = new ItemStackSnapshot[NUM_OF_SLOTS];
+
+            for(int i = 0; i < NUM_OF_SLOTS; i++) {
+
+                savedSlots[i] = slots[i].poll() // takes ItemStack for this slot and removes it
+                        .map(ItemStack::createSnapshot)
+                        .orElse(ItemStackSnapshot.NONE);
+            }
+
+            savedInventories.put(player, savedSlots);
+        });
+    }
+
+
+    void restoreInventory(Player player) {
+
+        Slot [] slots = getInventorySlots(player);
+        ItemStackSnapshot [] savedSlots = savedInventories.get(player);
+
+        for(int i = 0; i < NUM_OF_SLOTS; i++)
+            slots[i].set(savedSlots[i].createStack());
+
+        savedInventories.remove(player);
+    }
+
+    private Slot [] getInventorySlots(Player player) {
+
+        Slot [] slots = new Slot[NUM_OF_SLOTS];
+
+        int i = 0;
+        for (Inventory slot : player.getInventory().slots())
+            slots[i++] = (Slot) slot;
+
+        return slots;
+    }
+
+    void playerDied(Player player) {
+
+        restoreInventory(player);
+        players.remove(player);
+
+        if (players.size() <= 1) {
+            awardWinner();
+            die();
+        }
+    }
+
+    void awardWinner() {
+        // TODO implement
     }
 
     private class StartCountDown {
