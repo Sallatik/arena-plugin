@@ -1,6 +1,5 @@
 package sexy.minecraft.arenaplugin;
 
-import org.spongepowered.api.Sponge;
 import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.item.inventory.Inventory;
 import org.spongepowered.api.item.inventory.ItemStack;
@@ -17,24 +16,30 @@ import java.util.concurrent.TimeUnit;
 public class Arena {
 
     // TODO load those values from configuration file instead
-    public static final int MAX_PLAYERS = 10;
-    public static final int MIN_PLAYERS = 2;
-    public static final int DELAY = 60;        // delay before the game actually starts
+
+    private final int delay;       // delay before the game actually starts
+    private final int maxPlayers;
+    private final int minPlayers;
 
     private boolean gameStarted = false;       // is set true whenever game is started
-    private Set<Player> players = new HashSet<>(MIN_PLAYERS);
+    private Set<Player> players;
     private final ArenaPlugin plugin;
 
     // points for players to be placed when the game starts. Currently hard coded
     // TODO load from file instead
-    private Set<Location<World>> startingPoints = hardCodedStartingPoints();
+    private Set<Location<World>> spawnPoints;
 
     private Map<Player, ItemStackSnapshot[]> savedInventories = new HashMap<>();
 
     private StartCountDown startCountDown = new StartCountDown();
 
-    public Arena(ArenaPlugin plugin) {
+    public Arena(ArenaPlugin plugin, int maxPlayers, int minPlayers, Set<Location<World>> spawnPoints, int delay) {
         this.plugin = plugin;
+        this.maxPlayers = maxPlayers;
+        this.minPlayers = minPlayers;
+        this.spawnPoints = new HashSet<>(spawnPoints);
+        this.players = new HashSet<>(minPlayers);
+        this.delay = delay;
     }
 
     public void startCountDown() {
@@ -54,7 +59,7 @@ public class Arena {
         players.add(player);
 
         // if max number of players, start immediately
-        if (players.size() == MAX_PLAYERS) {
+        if (players.size() == maxPlayers) {
 
             startCountDown.cancel();
             startGame();
@@ -101,7 +106,7 @@ public class Arena {
     private void positionPlayers() {
 
         // linked list implements Deque interface, thus can be used as a stack
-        LinkedList<Location<World>> locations = new LinkedList<>(startingPoints);
+        LinkedList<Location<World>> locations = new LinkedList<>(spawnPoints);
         // shuffle locations so that they appear in random order
         Collections.shuffle(locations);
         // teleport every player to location popped from the stack
@@ -171,7 +176,7 @@ public class Arena {
     private class StartCountDown {
 
         Task timer;
-        int secondsLeft = DELAY;
+        int secondsLeft;
 
         void cancel() {
             timer.cancel();
@@ -179,6 +184,7 @@ public class Arena {
 
         void start() {
 
+            secondsLeft = delay;
             timer = Task.builder()
                     .interval(1, TimeUnit.SECONDS)
                     .execute(this::eachSecond)
@@ -197,7 +203,7 @@ public class Arena {
 
         void timeout() {
 
-            if (players.size() >= MIN_PLAYERS)  // if there is enough players
+            if (players.size() >= minPlayers)  // if there is enough players
                 startGame();
             else {
                 die();
@@ -208,19 +214,5 @@ public class Arena {
         void extend(int seconds) {
             secondsLeft += seconds;
         }
-    }
-
-    // TODO remove when not needed
-    private Set<Location<World>> hardCodedStartingPoints() {
-
-        World world = Sponge.getServer().getWorld("world").get();
-        Set<Location<World>> hardcoded = new HashSet<>();
-
-        hardcoded.add(new Location<>(world, 1, 1, 1));
-        hardcoded.add(new Location<>(world, 500, 200, 500));
-        hardcoded.add(new Location<>(world, 255, 100, 255));
-        // ...
-
-        return hardcoded;
     }
 }
