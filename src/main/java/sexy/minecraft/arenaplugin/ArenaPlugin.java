@@ -39,11 +39,13 @@ public class ArenaPlugin {
     private ArenaBuilder arenaBuilder = new ArenaBuilder(this);
     private Arena arena = null; // is null until someone uses /arena start
     private ChestManager chestManager = new ChestManager(this);
+    private PlayerStateStore playerStateStore = new PlayerStateStore();
 
     @Listener
     public void onGameInit(GameInitializationEvent event) {
         registerCommands();
         Sponge.getEventManager().registerListeners(this, chestManager);
+        Sponge.getEventManager().registerListeners(this, playerStateStore);
     }
 
     private void registerCommands() {
@@ -253,12 +255,15 @@ public class ArenaPlugin {
             Player deadPlayer = (Player) event.getTargetEntity();
             if (arena.contains(deadPlayer)) {
                 arena.playerDied(deadPlayer);
-                event.setCancelled(true);
             }
         }
     }
 
     public Logger getLogger() {
         return logger;
+    }
+
+    public PlayerStateStore getPlayerStateStore() {
+        return playerStateStore;
     }
 }
