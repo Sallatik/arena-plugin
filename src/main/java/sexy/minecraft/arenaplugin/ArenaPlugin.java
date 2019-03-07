@@ -38,10 +38,12 @@ public class ArenaPlugin {
 
     private ArenaBuilder arenaBuilder = new ArenaBuilder(this);
     private Arena arena = null; // is null until someone uses /arena start
+    private ChestManager chestManager = new ChestManager(this);
 
     @Listener
     public void onGameInit(GameInitializationEvent event) {
         registerCommands();
+        Sponge.getEventManager().registerListeners(this, chestManager);
     }
 
     private void registerCommands() {
@@ -118,12 +120,30 @@ public class ArenaPlugin {
                 .child(delay, "delay")
                 .build();
 
+        CommandSpec chestAdd = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.arenaChestAddRemove(requirePlayer(src), false);
+                    return CommandResult.success();
+                }).build();
+
+        CommandSpec chestRemove = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.arenaChestAddRemove(requirePlayer(src), true);
+                    return CommandResult.success();
+                }).build();
+
+        CommandSpec chest = CommandSpec.builder()
+                .child(chestAdd, "add")
+                .child(chestRemove, "remove")
+                .build();
+
         CommandSpec arena = CommandSpec.builder()
                 .child(start, "start")
                 .child(join, "join")
                 .child(leave, "leave")
                 .child(extend, "extend")
                 .child(point, "point")
+                .child(chest, "chest")
                 .child(set, "set")
                 .build();
 

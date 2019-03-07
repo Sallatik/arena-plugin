@@ -1,0 +1,18 @@
+[
+    {
+        "modid": "arena-plugin",
+        "name": "Arena Plugin",
+        "version": "1.0-SNAPSHOT",
+        "description": "Plugin for creating a PvP arena",
+        "url": "http://minecraft.sexy",
+        "authorList": [
+            "sorrowloki, Sallatik"
+        ],
+        "dependencies": [
+            "spongeapi@7.1.0"
+        ],
+        "requiredMods": [
+            "spongeapi@7.1.0"
+        ]
+    }
+]
