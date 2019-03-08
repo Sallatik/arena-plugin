@@ -1,3 +1,5 @@
 sexy/minecraft/arenaplugin/ArenaBuilder.class
 sexy/minecraft/arenaplugin/ChestManager.class
+sexy/minecraft/arenaplugin/Util.class
+sexy/minecraft/arenaplugin/InventorySnapshot.class
 sexy/minecraft/arenaplugin/PlayerStateStore.class

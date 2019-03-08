@@ -19,6 +19,7 @@ public class Arena {
     private final int delay;       // delay before the game actually starts
     private final int maxPlayers;
     private final int minPlayers;
+    private final int chestInterval;
 
     private boolean gameStarted = false;       // is set true whenever game is started
     private Set<Player> players;
@@ -30,13 +31,14 @@ public class Arena {
 
     private StartCountDown startCountDown = new StartCountDown();
 
-    public Arena(ArenaPlugin plugin, int maxPlayers, int minPlayers, Set<Location<World>> spawnPoints, int delay) {
+    public Arena(ArenaPlugin plugin, int maxPlayers, int minPlayers, Set<Location<World>> spawnPoints, int delay, int chestInterval) {
         this.plugin = plugin;
         this.maxPlayers = maxPlayers;
         this.minPlayers = minPlayers;
         this.spawnPoints = new HashSet<>(spawnPoints);
         this.players = new HashSet<>(minPlayers);
         this.delay = delay;
+        this.chestInterval = chestInterval;
     }
 
     public void startCountDown() {
@@ -97,6 +99,7 @@ public class Arena {
         players.forEach(playerStateStore::store);
         // TODO restrict fast travel commands usage e.g. /spawn, /home, /warp
         // put players at starting points
+        plugin.getChestManager().startPopulatingChests(chestInterval);
         positionPlayers();
         sendToAllPlayers("now fight!");
         // TODO start game (item spawning, restoring losers inventory, determining the winner)
@@ -126,6 +129,7 @@ public class Arena {
     void awardWinner() {
         PlayerStateStore playerStateStore = plugin.getPlayerStateStore();
         players.forEach(playerStateStore::restore);
+        plugin.getChestManager().stopPopulatingChests();
     }
 
     private class StartCountDown {

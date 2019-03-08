@@ -13,19 +13,27 @@ import org.spongepowered.api.entity.living.player.Player;
 import org.spongepowered.api.event.EventManager;
 import org.spongepowered.api.event.Listener;
 import org.spongepowered.api.event.block.InteractBlockEvent;
+import org.spongepowered.api.scheduler.Task;
 import org.spongepowered.api.text.Text;
 import org.spongepowered.api.world.Location;
 import org.spongepowered.api.world.World;
 import org.spongepowered.plugin.meta.util.NonnullByDefault;
 
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
+
+import static sexy.minecraft.arenaplugin.Util.getChest;
+import static sexy.minecraft.arenaplugin.Util.isSameBlock;
 
 public class ChestManager {
 
     private final ArenaPlugin plugin;
     private Map<Player, Boolean> addingRemovingChests = new HashMap<>();
     private Set<Chest> chests = new HashSet<>();
+    private List<InventorySnapshot> sets = new ArrayList<>();
+    private Set<Player> addingSets = new HashSet<>();
+    private Task populator;
 
     public ChestManager(ArenaPlugin plugin) {
         this.plugin = plugin;
@@ -35,18 +43,42 @@ public class ChestManager {
         addingRemovingChests.put(player, removing);
     }
 
+    public void addInventory(Player player) { addingSets.add(player); }
+
     private void removeChest(Chest chest) {
         chests = chests.stream()
-                .filter(c -> !locationEquals(c.getLocation(), chest.getLocation()))
+                .filter(c -> !isSameBlock(c.getLocation(), chest.getLocation()))
                 .collect(Collectors.toSet());
     }
 
-    private boolean locationEquals(Location<World> a, Location<World> b) {
-        return
-                a.getBlockX() == b.getBlockX() &&
-                        a.getBlockY() == b.getBlockY() &&
-                        a.getBlockZ() == b.getBlockZ() &&
-                        a.getExtent() == b.getExtent();
+    public void startPopulatingChests(long interval) {
+
+        populator = Task.builder()
+                .execute(this::populateChests)
+                .interval(interval, TimeUnit.SECONDS)
+                .submit(plugin);
+    }
+
+    public void stopPopulatingChests() {
+
+        if (populator != null)
+            populator.cancel();
+    }
+
+    public void populateChests() {
+        Random random = new Random();
+        chests.forEach(chest -> {
+            InventorySnapshot snapshot = sets.get(random.nextInt(sets.size()));
+            snapshot.apply(chest.getInventory());
+        });
+    }
+
+    public void clearSets() {
+        sets.clear();
+    }
+
+    public void clearChests() {
+        chests.clear();
     }
 
     private void addChest(Chest chest) {
@@ -56,27 +88,32 @@ public class ChestManager {
 
     @Listener
     public void onBlockInteract(InteractBlockEvent.Primary event) {
-        if (event.getSource() instanceof Player) {
-			
+
+        Optional<Chest> optionalChest = getChest(event.getTargetBlock().getLocation().orElse(null));
+
+        if(event.getSource() instanceof Player && optionalChest.isPresent()) {
+
             Player player = (Player) event.getSource();
+            Chest chest = optionalChest.get();
+
+            if (addingSets.contains(player)) {
+                sets.add(new InventorySnapshot(chest.getInventory()));
+                addingSets.remove(player);
+                player.sendMessage(Text.of("inventory saved"));
+            }
 
             if (addingRemovingChests.containsKey(player)) {
-
-                Optional<TileEntity> block = event.getTargetBlock().getLocation().get().getTileEntity();
-
-                if (block.isPresent() && block.get().getType().equals(TileEntityTypes.CHEST)) {
-
-                    Chest chest = (Chest) block.get();
-                    if (addingRemovingChests.get(player))
-                        removeChest(chest);
-                    else
-                        addChest(chest);
-                } else
-                    player.sendMessage(Text.of("not a chest!"));
+                if (addingRemovingChests.get(player)) {
+                    removeChest(chest);
+                    player.sendMessage(Text.of("chest removed"));
+                } else {
+                    addChest(chest);
+                    player.sendMessage(Text.of("chest added"));
+                }
 
                 addingRemovingChests.remove(player);
-				player.sendMessage(Text.of(String.valueOf(chests.size())));
             }
+
         }
     }
 }

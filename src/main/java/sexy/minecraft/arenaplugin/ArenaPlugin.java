@@ -116,10 +116,19 @@ public class ArenaPlugin {
                         )
                 ).build();
 
+        CommandSpec chestInterval = CommandSpec.builder()
+                .executor((src, args) -> arenaSetX(args, "seconds", arenaBuilder::setChestInterval))
+                .arguments(
+                        GenericArguments.onlyOne(
+                                GenericArguments.integer(Text.of("seconds"))
+                        )
+                ).build();
+
         CommandSpec set = CommandSpec.builder()
                 .child(minPlayers, "min-players")
                 .child(maxPlayers, "max-players")
                 .child(delay, "delay")
+                .child(chestInterval, "chest-interval")
                 .build();
 
         CommandSpec chestAdd = CommandSpec.builder()
@@ -134,9 +143,40 @@ public class ArenaPlugin {
                     return CommandResult.success();
                 }).build();
 
+        CommandSpec chestClear = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.clearChests();
+                    return CommandResult.success();
+                }).build();
+
         CommandSpec chest = CommandSpec.builder()
                 .child(chestAdd, "add")
                 .child(chestRemove, "remove")
+                .child(chestClear, "clear")
+                .build();
+
+        CommandSpec chestSetAdd = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.addInventory(requirePlayer(src));
+                    return CommandResult.success();
+                }).build();
+
+        CommandSpec chestSetClear = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.clearSets();
+                    return CommandResult.success();
+                }).build();
+
+        CommandSpec chestSet = CommandSpec.builder()
+                .child(chestSetAdd, "add")
+                .child(chestSetClear, "clear")
+                .build();
+
+        CommandSpec testChests = CommandSpec.builder()
+                .executor((src, args) -> {
+                    chestManager.populateChests();
+                    return CommandResult.success();
+                })
                 .build();
 
         CommandSpec arena = CommandSpec.builder()
@@ -147,6 +187,8 @@ public class ArenaPlugin {
                 .child(point, "point")
                 .child(chest, "chest")
                 .child(set, "set")
+                .child(chestSet, "chest-set")
+                .child(testChests, "test-chests")
                 .build();
 
         Sponge.getCommandManager().register(this, arena, "arena");
@@ -265,5 +307,9 @@ public class ArenaPlugin {
 
     public PlayerStateStore getPlayerStateStore() {
         return playerStateStore;
+    }
+
+    public ChestManager getChestManager() {
+        return chestManager;
     }
 }
