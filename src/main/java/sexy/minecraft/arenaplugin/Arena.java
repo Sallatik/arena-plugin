@@ -130,6 +130,7 @@ public class Arena {
         PlayerStateStore playerStateStore = plugin.getPlayerStateStore();
         players.forEach(playerStateStore::restore);
         plugin.getChestManager().stopPopulatingChests();
+        players.forEach(p -> p.sendMessage(Text.of("you won!")));
     }
 
     private class StartCountDown {
