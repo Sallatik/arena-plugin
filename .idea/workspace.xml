@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="3f921a7e-df1c-4980-adaa-52e862ea8c80" name="Default Changelist" comment="" />
+    <list default="true" id="3f921a7e-df1c-4980-adaa-52e862ea8c80" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java" afterDir="false" />
+    </list>
     <ignored path="$PROJECT_DIR$/out/" />
     <ignored path="$PROJECT_DIR$/target/" />
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
@@ -15,8 +17,8 @@
       <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/Arena.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="1665">
-              <caret line="131" column="56" selection-start-line="131" selection-start-column="56" selection-end-line="131" selection-end-column="56" />
+            <state relative-caret-position="264">
+              <caret line="132" column="62" selection-start-line="132" selection-start-column="62" selection-end-line="132" selection-end-column="62" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -48,10 +50,10 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="true">
+      <file pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ArenaPlugin.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="137">
+            <state relative-caret-position="2265">
               <caret line="170" column="42" selection-start-line="170" selection-start-column="42" selection-end-line="170" selection-end-column="42" />
               <folding>
                 <element signature="imports" expanded="true" />
@@ -72,11 +74,11 @@
           </provider>
         </entry>
       </file>
-      <file pinned="false" current-in-tab="false">
+      <file pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="510">
-              <caret line="49" column="5" selection-start-line="49" selection-start-column="5" selection-end-line="49" selection-end-column="5" />
+            <state relative-caret-position="339">
+              <caret line="54" column="11" lean-forward="true" selection-start-line="54" selection-start-column="11" selection-end-line="54" selection-end-column="11" />
               <folding>
                 <element signature="imports" expanded="true" />
               </folding>
@@ -127,12 +129,12 @@
         <option value="$PROJECT_DIR$/pom.xml" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerDataManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/InventorySnapshot.java" />
-        <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/Util.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ChestManager.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ArenaBuilder.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/Arena.java" />
         <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ArenaPlugin.java" />
+        <option value="$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java" />
       </list>
     </option>
   </component>
@@ -184,7 +186,21 @@
     <navigator proportions="" version="1">
       <foldersAlwaysOnTop value="true" />
     </navigator>
-    <panes />
+    <panes>
+      <pane id="Scope" />
+      <pane id="ProjectPane">
+        <subPane>
+          <expand>
+            <path>
+              <item name="arena-plugin" type="b2602c69:ProjectViewProjectNode" />
+              <item name="arena-plugin" type="462c0819:PsiDirectoryNode" />
+            </path>
+          </expand>
+          <select />
+        </subPane>
+      </pane>
+      <pane id="PackagesPane" />
+    </panes>
   </component>
   <component name="PropertiesComponent">
     <property name="WebServerToolWindowFactoryState" value="false" />
@@ -356,10 +372,10 @@
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="91356000" />
+    <option name="totallyTimeSpent" value="92496000" />
   </component>
   <component name="ToolWindowManager">
-    <frame x="1" y="-1" width="1366" height="773" extended-state="6" />
+    <frame x="2" y="0" width="1364" height="768" extended-state="6" />
     <layout>
       <window_info content_ui="combo" id="Project" order="0" weight="0.25" />
       <window_info id="Structure" order="1" side_tool="true" weight="0.25" />
@@ -450,8 +466,8 @@
     <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerDataManager.java" />
     <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/Arena.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="1665">
-          <caret line="131" column="56" selection-start-line="131" selection-start-column="56" selection-end-line="131" selection-end-column="56" />
+        <state relative-caret-position="264">
+          <caret line="132" column="62" selection-start-line="132" selection-start-column="62" selection-end-line="132" selection-end-column="62" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
@@ -488,16 +504,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="510">
-          <caret line="49" column="5" selection-start-line="49" selection-start-column="5" selection-end-line="49" selection-end-column="5" />
-          <folding>
-            <element signature="imports" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ArenaBuilder.java">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="870">
@@ -510,8 +516,18 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/ArenaPlugin.java">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="137">
+        <state relative-caret-position="2265">
           <caret line="170" column="42" selection-start-line="170" selection-start-column="42" selection-end-line="170" selection-end-column="42" />
+          <folding>
+            <element signature="imports" expanded="true" />
+          </folding>
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/src/main/java/sexy/minecraft/arenaplugin/PlayerStateStore.java">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="339">
+          <caret line="54" column="11" lean-forward="true" selection-start-line="54" selection-start-column="11" selection-end-line="54" selection-end-column="11" />
           <folding>
             <element signature="imports" expanded="true" />
           </folding>
